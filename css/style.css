@@ -1,0 +1,186 @@
+body { 
+  font-family: Helvetica, Arial, sans-serif
+}
+
+#terrain{
+  margin-top: -4px;
+}
+
+.canvas {
+  position: relative;
+  margin-left: 20px;
+}
+
+.body-game{
+  background: url(../images/background.gif);
+}
+
+.header { 
+  width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 20px;
+  background-color: rgba(0,0,0,0.4);
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.header h1 {
+  color: white;
+  padding: 5px;
+}
+
+/* Login screen */
+
+#login-register-container {
+  border-radius: 20px;
+  width: 400px;
+  height: 200px;
+  padding: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: rgba(0,0,0,0.4);
+  color: white;
+}
+
+#login-register-container span {
+  margin: 0px;
+  float: left;
+  display: block;
+  clear: both;
+}
+
+#login-register-container input[type=submit] {
+  width: 200px;
+  height: 30px;
+  font-size: 24px;
+}
+
+#login-register-container input[name=username]{
+  float:left;
+  text-align: center;
+  width: 360px;
+  height: 30px;
+  font-size: 24px;
+  border-radius: 20px;
+  padding-left: 12px;
+  padding-right: 12px;
+  margin-bottom: 20px;
+}
+
+#login-register-container .loader { 
+  width: 400px;
+  height: 200px;
+  z-index: 999;
+  background-color: rgba(0,0,0,0.4);
+  background-image: url(../images/ajax-loader.gif);
+  background-position: center;
+  background-repeat: no-repeat;
+  display:none;
+  position: absolute;
+}
+
+/* 2D game test */
+#canvas { 
+  float: left;
+}
+
+/* Chatbox iFrame */
+
+#chatbox-container{
+  display:none;
+}
+
+.chatbox-frame { 
+  float: left;
+  margin-left: 20px;
+  padding: 0;
+  border: 0;
+  width: 222px;
+  height: 625px;
+  overflow: hidden;
+}
+
+/* Chatbox */
+
+.body-frame {
+  margin: 0;
+  padding: 0;
+}
+
+.chatbox-papi{
+  padding: 0;
+  border: 0;
+  display: block;
+  float: center;
+  width: 204px;
+  height: 548px;
+}
+
+.chatbox-header{
+  margin: 0 0 0 0;
+  padding: 5px;
+  float: center;
+  width: 100%;
+  text-align: center; 
+  background-color: rgba(0,0,0,0.4);
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  position: relative;
+}
+
+.chatbox-header p{
+  margin: 0;
+  padding: 0;
+  color: white;
+  width: 100%;
+}
+
+.chatbox { 
+  float:left;
+  margin: 0;
+  padding: 10px;
+  background-color: rgba(0,0,0,0.4);
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.chatbox .messages { 
+  height: 480px;
+  border: 1px solid black;
+  overflow: auto;
+  color: yellow;
+  background-color: rgba(0,0,0,0.6);
+  font-size: 14px;
+}
+
+.chatbox .messages .message { 
+  display: block;
+  clear: both;
+  width: 100%;
+  float: left;
+  border-bottom: 1px dotted red;
+}
+
+.chat-form input[type=submit]{
+  float: right;
+  width: 80px;
+  height: 30px;
+  font-size: 24px;
+}
+
+.container-error{
+  margin: 30px 0 0 0;
+  padding: 0;
+  color: red;
+}
+
+#login-register-error{
+  text-align: right;
+  display: none;
+}
+
+/* this is temp until we add modernaizer tool*/
+.clear:before, .clear:after { content: ""; display: table; }
+.clear:after { clear: both; }
+.clear { zoom: 1; }
