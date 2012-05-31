@@ -48,65 +48,55 @@ function drawMe(){
   
   // Finally, we place the avatar wherever the character is placed.
   $('.player-' + myPlayerNumber).css('position', 'absolute');
-  $('.player-' + myPlayerNumber).css('top', posY * 32);
-  $('.player-' + myPlayerNumber).css('left', posX * 32);
+  drawMyPosition();
   
   // We send a Welcome message to let everyone else where we are.
   channel.publish("player-" + myPlayerNumber + "/" + posX + "/" + posY + "/Welcome");
 }
 
-// These are the methods that move the user's avatar when they press a direction key
+// Returns true iff the position is on the map, and is not fire or water.
 // First we check we're not reaching the limits
 // Then we check we're not going to step on rocks or water if we move
-// After that, we update the position and move the player.
-function leftArrowPressed() {
-  if (posX == 0){
-    return;
-  }
-  
-  if ((map[posY][posX - 1] == 0) || (map[posY][posX - 1] == 7)){
-    return;
-  }
-  
-  posX -= 1;
+function isValidPos(x, y) {
+  var mapType = map[y][x];
+  return (
+    (mapType !== 0) && (mapType !== 7) &&
+    (x >= 0) && (x <= 19) &&
+    (y >= 0) && (y <= 19)
+  );
+}
+
+// Draws our charactor on the map.
+function drawMyPosition () {
   $('.player-' + myPlayerNumber).css('left', posX * 32);
+  $('.player-' + myPlayerNumber).css('top', posY * 32);
+}
+
+// These are the methods that move the user's avatar when they press a direction key
+// After that, we update the position and move the player.
+function moveMyPosition (deltaX, deltaY) {
+  var newPosX = posX + deltaX;
+  var newPosY = posY + deltaY;
+
+  if (isValidPos(newPosX, newPosY)) {
+    posX = newPosX;
+    posY = newPosY;
+    drawMyPosition();
+  }
+}
+
+function leftArrowPressed() {
+  moveMyPosition(-1, 0);
 }
 
 function rightArrowPressed() {
-  if (posX == 19){
-    return;
-  }
-  
-  if ((map[posY][posX + 1] == 0) || (map[posY][posX + 1] == 7)){
-    return;
-  }
-  
-  posX += 1; 
-  $('.player-' + myPlayerNumber).css('left', posX * 32);
+  moveMyPosition(1, 0);
 }
 
 function upArrowPressed() {
-  if (posY == 0){
-    return;
-  }
-  
-  if ((map[posY - 1][posX] == 0) || (map[posY - 1][posX] == 7)){
-    return;
-  }
-  
-  posY -= 1; 
-  $('.player-' + myPlayerNumber).css('top', posY * 32);
+  moveMyPosition(0, -1);
 }
 
 function downArrowPressed() {
-  if (posY == 19){
-    return;
-  }
-  
-  if ((map[posY + 1][posX] == 0) || (map[posY + 1][posX] == 7)){
-    return;
-  }
-  
-  posY += 1;
-  $('.player-' + myPlayerNumber).css('top', posY * 32);
+  moveMyPosition(0, 1);
 }
