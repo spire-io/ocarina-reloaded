@@ -2,32 +2,21 @@
 // NOTE: When do 'posX * 32' we do it because every square in the map is 32x32
 // That way, we move the player 32px on any direction when we press the keys.
 
-var players = [];
-var maxNumberOfPlayers = 10;
 var myPlayerNumber; //Player number assigned to the user
 // User's position on the X and Y axis
 var posX = 0;
 var posY = 0;
 
-// Get an unused player number
-function getUnusedPlayerNumber() {
-  for (var i = 0; i < maxNumberOfPlayers; i++) {
-    if (!players[i]) {
-      players[i] = true;
-      return i;
-    }
-  }
-}
-
 //Moves any player.
 function drawPlayer(playerNumber, x, y){
   var playerName = "player-" + playerNumber;
   var playerClass = '.' + playerName;
+  var avatarName = "player-" + (playerNumber % 10);
 
   // Check to see if player is already on the board
   if ($(playerClass).length === 0) {
     // Add the player
-    $('.canvas').append("<img class='" + playerName + "' src='images/sprites/" + playerName + ".png' style='position:absolute'>");
+    $('.canvas').append("<img class='" + playerName + "' src='images/sprites/" + avatarName + ".png' style='position:absolute'>");
   }
 
   $(playerClass).css({
@@ -45,8 +34,8 @@ function initializeMyPlayer(){
     posY = Math.floor(Math.random()*20);
   } while ((map[posY][posX] == 0) || (map[posY][posX] == 7));
   
-  // We assign the player a number based on how many players are online
-  myPlayerNumber = getUnusedPlayerNumber();
+  // We assign the player a number based on the timestamp
+  myPlayerNumber = Date.now();
 
   drawPlayer(myPlayerNumber, posX, posY);
 

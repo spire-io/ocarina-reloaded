@@ -22,7 +22,6 @@ function messageListener (message) {
     var playerNumber = moveData[0].match(/player-(.*)/)[1];
     if (playerNumber !== myPlayerNumber) {
       // Set the player number to true, so we don't use it for ourselves
-      players[playerNumber] = true;
       drawPlayer(playerNumber, moveData[1], moveData[2]);
     }
   }
