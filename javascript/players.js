@@ -40,10 +40,10 @@ function initializeMyPlayer(){
   drawPlayer(myPlayerNumber, posX, posY);
 
   // We send a Welcome message to let everyone else where we are.
-  channel.publish("player-" + myPlayerNumber + "/" + posX + "/" + posY + "/Welcome");
+  channel.publish({ playerNumber: myPlayerNumber, type: 'welcome', x: posX, y: posY });
 }
 
-// Returns true iff the position is on the map, and is not fire or water.
+// Returns true if the position is on the map, and is not rocks or water.
 // First we check we're not reaching the limits
 // Then we check we're not going to step on rocks or water if we move
 function isValidPosition(x, y) {
@@ -65,6 +65,6 @@ function moveMyPosition (deltaX, deltaY) {
     posX = newPosX;
     posY = newPosY;
     drawPlayer(myPlayerNumber, posX, posY);
-    channel.publish("player-" + myPlayerNumber + "/" + posX + "/" + posY);
+    channel.publish({ playerNumber: myPlayerNumber, type: 'move', x: posX, y: posY });
   }
 }

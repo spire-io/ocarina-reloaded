@@ -11,18 +11,18 @@ function messageListener (message) {
   if (message.content === "Send me your positions"){
     if (myPlayerNumber >= 0) {
       // We add a "Welcome" item at the end so other players can count us
-      channel.publish("player-" + myPlayerNumber + "/" + posX + "/" + posY + "/Welcome");
+      channel.publish({ playerNumber: myPlayerNumber, type: 'welcome', x: posX, y: posY });
     }
   } else {
     // We transform the message into an array that stores the move data
-    var moveData = message.content.split('/');
+    var moveData = message.content;
     
     // We count the players currently online, counting all welcome messages
     // but we don't count undefined players and we don't count the current user.
-    var playerNumber = moveData[0].match(/player-(.*)/)[1];
+    var playerNumber = moveData.playerNumber;
     if (playerNumber !== myPlayerNumber) {
       // Set the player number to true, so we don't use it for ourselves
-      drawPlayer(playerNumber, moveData[1], moveData[2]);
+      drawPlayer(playerNumber, moveData.x, moveData.y);
     }
   }
 }
