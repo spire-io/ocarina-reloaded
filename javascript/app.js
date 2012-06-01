@@ -19,11 +19,11 @@ function messageListener (message) {
     
     // We count the players currently online, counting all welcome messages
     // but we don't count undefined players and we don't count the current user.
-    if (moveData[0] !== "player-" + myPlayerNumber) {
-      if (moveData[3] === "Welcome") {
-        players++;
-      }
-      drawPlayer(moveData[0], moveData[1], moveData[2]);
+    var playerNumber = moveData[0].match(/player-(.*)/)[1];
+    if (playerNumber !== myPlayerNumber) {
+      // Set the player number to true, so we don't use it for ourselves
+      players[playerNumber] = true;
+      drawPlayer(playerNumber, moveData[1], moveData[2]);
     }
   }
 }

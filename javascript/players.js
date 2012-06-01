@@ -2,14 +2,26 @@
 // NOTE: When do 'posX * 32' we do it because every square in the map is 32x32
 // That way, we move the player 32px on any direction when we press the keys.
 
-var players = 0; //Number of players currently playing
+var players = [];
+var maxNumberOfPlayers = 10;
 var myPlayerNumber; //Player number assigned to the user
 // User's position on the X and Y axis
 var posX = 0;
 var posY = 0;
 
-//Moves any player. playerName is of the form "player-X" for some number X.
-function drawPlayer(playerName, x, y){
+// Get an unused player number
+function getUnusedPlayerNumber() {
+  for (var i = 0; i < maxNumberOfPlayers; i++) {
+    if (!players[i]) {
+      players[i] = true;
+      return i;
+    }
+  }
+}
+
+//Moves any player.
+function drawPlayer(playerNumber, x, y){
+  var playerName = "player-" + playerNumber;
   var playerClass = '.' + playerName;
 
   // Check to see if player is already on the board
@@ -34,9 +46,9 @@ function initializeMyPlayer(){
   } while ((map[posY][posX] == 0) || (map[posY][posX] == 7));
   
   // We assign the player a number based on how many players are online
-  myPlayerNumber = players;
+  myPlayerNumber = getUnusedPlayerNumber();
 
-  drawPlayer('player-' + myPlayerNumber, posX, posY);
+  drawPlayer(myPlayerNumber, posX, posY);
 
   // We send a Welcome message to let everyone else where we are.
   channel.publish("player-" + myPlayerNumber + "/" + posX + "/" + posY + "/Welcome");
@@ -63,7 +75,7 @@ function moveMyPosition (deltaX, deltaY) {
   if (isValidPosition(newPosX, newPosY)) {
     posX = newPosX;
     posY = newPosY;
-    drawPlayer('player-' + myPlayerNumber, posX, posY);
+    drawPlayer(myPlayerNumber, posX, posY);
     channel.publish("player-" + myPlayerNumber + "/" + posX + "/" + posY);
   }
 }
