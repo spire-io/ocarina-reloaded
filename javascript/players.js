@@ -8,7 +8,7 @@ var myPlayerNumber; //Player number assigned to the user
 var posX = 0;
 var posY = 0;
 
-//Moves any player (except the user). Receives an array where:
+//Moves any player. playerName is of the form "player-X" for some number X.
 function drawPlayer(playerName, x, y){
   var playerClass = '.' + playerName;
 
@@ -30,7 +30,7 @@ function initializeMyPlayer(){
   // We make sure not to place the character over rocks or water.
   do {
     posX = Math.floor(Math.random()*20);
-    posY = Math.floor(Math.random()*20); 
+    posY = Math.floor(Math.random()*20);
   } while ((map[posY][posX] == 0) || (map[posY][posX] == 7));
   
   // We assign the player a number based on how many players are online
@@ -45,7 +45,7 @@ function initializeMyPlayer(){
 // Returns true iff the position is on the map, and is not fire or water.
 // First we check we're not reaching the limits
 // Then we check we're not going to step on rocks or water if we move
-function isValidPos(x, y) {
+function isValidPosition(x, y) {
   var mapType = map[y][x];
   return (
     (mapType !== 0) && (mapType !== 7) &&
@@ -60,7 +60,7 @@ function moveMyPosition (deltaX, deltaY) {
   var newPosX = posX + deltaX;
   var newPosY = posY + deltaY;
 
-  if (isValidPos(newPosX, newPosY)) {
+  if (isValidPosition(newPosX, newPosY)) {
     posX = newPosX;
     posY = newPosY;
     drawPlayer('player-' + myPlayerNumber, posX, posY);
