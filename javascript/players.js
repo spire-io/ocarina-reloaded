@@ -9,7 +9,7 @@ var posX = 0;
 var posY = 0;
 
 //Moves any player (except the user). Receives an array where:
-function movePlayer(playerName, x, y){
+function drawPlayer(playerName, x, y){
   var playerClass = '.' + playerName;
 
   // Check to see if player is already on the board
@@ -25,7 +25,7 @@ function movePlayer(playerName, x, y){
 }
 
 //Draws the user when they start playing
-function drawMe(){
+function initializeMyPlayer(){
   // Positions to place the character randomly. 
   // We make sure not to place the character over rocks or water.
   do {
@@ -35,17 +35,9 @@ function drawMe(){
   
   // We assign the player a number based on how many players are online
   myPlayerNumber = players;
-  
-  // Every player's avatar is an image which class is the player's name
-  $('.canvas').append("<img class='player-" + myPlayerNumber + "' src='images/sprites/player-" + myPlayerNumber + ".png'>");
-  
-  // This is the list of players
-  $('.playerList').append('Player ' + myPlayerNumber + '(YOU)');
-  
-  // Finally, we place the avatar wherever the character is placed.
-  $('.player-' + myPlayerNumber).css('position', 'absolute');
-  drawMyPosition();
-  
+
+  drawPlayer('player-' + myPlayerNumber, posX, posY);
+
   // We send a Welcome message to let everyone else where we are.
   channel.publish("player-" + myPlayerNumber + "/" + posX + "/" + posY + "/Welcome");
 }
@@ -62,12 +54,6 @@ function isValidPos(x, y) {
   );
 }
 
-// Draws our charactor on the map.
-function drawMyPosition () {
-  $('.player-' + myPlayerNumber).css('left', posX * 32);
-  $('.player-' + myPlayerNumber).css('top', posY * 32);
-}
-
 // These are the methods that move the user's avatar when they press a direction key
 // After that, we update the position and move the player.
 function moveMyPosition (deltaX, deltaY) {
@@ -77,22 +63,7 @@ function moveMyPosition (deltaX, deltaY) {
   if (isValidPos(newPosX, newPosY)) {
     posX = newPosX;
     posY = newPosY;
-    drawMyPosition();
+    drawPlayer('player-' + myPlayerNumber, posX, posY);
+    channel.publish("player-" + myPlayerNumber + "/" + posX + "/" + posY);
   }
-}
-
-function leftArrowPressed() {
-  moveMyPosition(-1, 0);
-}
-
-function rightArrowPressed() {
-  moveMyPosition(1, 0);
-}
-
-function upArrowPressed() {
-  moveMyPosition(0, -1);
-}
-
-function downArrowPressed() {
-  moveMyPosition(0, 1);
 }

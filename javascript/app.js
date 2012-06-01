@@ -19,13 +19,11 @@ function messageListener (message) {
     
     // We count the players currently online, counting all welcome messages
     // but we don't count undefined players and we don't count the current user.
-    if ((moveData[3] === "Welcome") && (moveData[0] !== "player-" + myPlayerNumber)){
-      players++;
-      movePlayer(moveData[0], moveData[1], moveData[2]);
-    }
-    // If the message wasn't sent by current user, we move the player
-    if (moveData[0] != "player-" + myPlayerNumber){
-      movePlayer(moveData[0], moveData[1], moveData[2]);
+    if (moveData[0] !== "player-" + myPlayerNumber) {
+      if (moveData[3] === "Welcome") {
+        players++;
+      }
+      drawPlayer(moveData[0], moveData[1], moveData[2]);
     }
   }
 }
@@ -70,7 +68,7 @@ $(document).ready(function(){
         channel.publish("Send me your positions");
 
         // We put a delay here to have time to draw everyone else before we start.
-        setTimeout(drawMe, 5000);
+        setTimeout(initializeMyPlayer, 5000);
       });
     });
   });
@@ -81,20 +79,20 @@ $(document).ready(function(){
     evt = evt || window.event;
     switch (evt.keyCode) {
       case 37:
-        leftArrowPressed();
-        channel.publish("player-" + myPlayerNumber + "/" + posX + "/" + posY);
+        // Left arrow
+        moveMyPosition(-1, 0);
         break;
       case 38:
-        upArrowPressed();
-        channel.publish("player-" + myPlayerNumber + "/" + posX + "/" + posY);
+        // Up arrow
+        moveMyPosition(0, -1);
         break;
       case 39:
-        rightArrowPressed();
-        channel.publish("player-" + myPlayerNumber + "/" + posX + "/" + posY);
+        // Right arrow
+        moveMyPosition(1, 0);
         break;
       case 40:
-        downArrowPressed();
-        channel.publish("player-" + myPlayerNumber + "/" + posX + "/" + posY);
+        // Down arrow
+        moveMyPosition(0, 1);
         break;
     }
   };
