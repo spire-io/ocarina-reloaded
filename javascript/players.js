@@ -9,23 +9,19 @@ var posX = 0;
 var posY = 0;
 
 //Moves any player (except the user). Receives an array where:
-// moveData[0] is the player name
-// moveData[1] is the position of the X axis
-// moveData[2] is the position of the Y axis
-function movePlayer(){
-    $('.' + moveData[0] + '').css('left', moveData[1] * 32);    
-    $('.' + moveData[0] + '').css('top', moveData[2] * 32);
-}
+function movePlayer(playerName, x, y){
+  var playerClass = '.' + playerName;
 
-//Draws any player (except the user) when they start playing. Receives an array where:
-// moveData[0] is the player name
-// moveData[1] is the position of the X axis
-// moveData[2] is the position of the Y axis
-function drawPlayer(){
-  $('.canvas').append("<img class='" + moveData[0] + "' src='images/sprites/" + moveData[0] + ".png'>");
-  $('.' + moveData[0] + '').css('position', 'absolute');
-  $('.' + moveData[0] + '').css('left', moveData[1] * 32);    
-  $('.' + moveData[0] + '').css('top', moveData[2] * 32);
+  // Check to see if player is already on the board
+  if ($(playerClass).length === 0) {
+    // Add the player
+    $('.canvas').append("<img class='" + playerName + "' src='images/sprites/" + playerName + ".png' style='position:absolute'>");
+  }
+
+  $(playerClass).css({
+    left: 32*x,
+    top: 32*y
+  });
 }
 
 //Draws the user when they start playing
