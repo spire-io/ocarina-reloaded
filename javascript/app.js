@@ -66,8 +66,8 @@ $(document).ready(function(){
         // And let everyone we're here. We need to know where they are.              
         channel.publish("Send me your positions");
 
-        // We put a delay here to have time to draw everyone else before we start.
-        setTimeout(initializeMyPlayer, 5000);
+        // Start my player
+        initializeMyPlayer();
       });
     });
   });
