@@ -19,8 +19,9 @@ function messageListener (message) {
     
     // We count the players currently online, counting all welcome messages
     // but we don't count undefined players and we don't count the current user.
-    var playerNumber = moveData[0].match(/player-(.*)/)[1];
+    var playerNumber = parseInt(moveData[0].match(/player-(.*)/)[1], 10);
     if (playerNumber !== myPlayerNumber) {
+      console.log('HERE')
       // Set the player number to true, so we don't use it for ourselves
       drawPlayer(playerNumber, moveData[1], moveData[2]);
     }
