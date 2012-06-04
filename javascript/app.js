@@ -1,6 +1,23 @@
 // This is the core of the app. This is where magic happens
 
-var channel;
+// Url and caps for channel and subscription
+var channelUrlAndCaps = {
+  url: "https://api.spire.io/account/Ac-qy8B/channel/Ch-qzgC",
+  capabilities: {
+    publish: "VKMKDDiMY9ARQSkmeGrem0A"
+  }
+};
+
+var subscriptionUrlAndCaps = {
+  url: "https://api.spire.io/account/Ac-qy8B/subscription/Su-qnQB",
+  capabilities: {
+    events: "7UNgwKv1AFuSCFzpPt2AjPw"
+  }
+};
+
+// Actually channel and subscription that we will get from Spire with the above capabilities
+var channel = null;
+var subscription = null;
 
 // The messageListener runs for every message received.
 function messageListener (message) {
@@ -36,40 +53,33 @@ $(document).ready(function(){
   // Start by drawing the map
   drawMap();
 
-  //We start the service
-  spire.start('Ac-gN0gFRN1CDOc6uyV4SP5SA-gdtw', function (err, session) {
-    // Get the channel and the subscription previously created
-    var subscriptionName = "ocarinaGameSubscription";
-    var channelName = "ocarinaGameChannel";
+  spire.api.channelFromUrlAndCapabilities(channelUrlAndCaps, function (err, chan) {
+    if (err) {
+      console.error("Error getting channel.");
+      console.error(err);
+      return;
+    }
 
-    spire.session.channelByName(channelName, function (err, chan) {
+    channel = chan;
+    spire.api.subscriptionFromUrlAndCapabilities(subscriptionUrlAndCaps, function (err, subscription) {
       if (err) {
-        console.error("Error getting channel.");
+        console.error("Error getting subscription.");
         console.error(err);
         return;
       }
 
-      channel = chan;
-      spire.session.subscriptionByName(subscriptionName, function (err, subscription) {
-        if (err) {
-          console.error("Error getting subscription.");
-          console.error(err);
-          return;
-        }
+      //TODO: checkAvailability();
+      // We add the listener to get every incoming message
+      subscription.addListener('message', messageListener);
 
-        //TODO: checkAvailability();
-        // We add the listener to get every incoming message
-        subscription.addListener('message', messageListener);
+      // We need to startListening to get the messages
+      subscription.startListening({ min_timestamp: 'now' });
 
-        // We need to startListening to get the messages
-        subscription.startListening({ min_timestamp: 'now' });
+      // And let everyone we're here. We need to know where they are.              
+      channel.publish("Send me your positions");
 
-        // And let everyone we're here. We need to know where they are.              
-        channel.publish("Send me your positions");
-
-        // Start my player
-        initializeMyPlayer();
-      });
+      // Start my player
+      initializeMyPlayer();
     });
   });
   
