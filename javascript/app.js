@@ -12,13 +12,6 @@ var channelUrlAndCaps = {
   }
 };
 
-var subscriptionUrlAndCaps = {
-  url: "https://api.spire.io/account/Ac-qy8B/subscription/Su-qnQB",
-  capabilities: {
-    events: "7UNgwKv1AFuSCFzpPt2AjPw"
-  }
-};
-
 var channelsUrlAndCaps = {
   url: "https://api.spire.io/account/Ac-qy8B/channels",
   capabilities: {
