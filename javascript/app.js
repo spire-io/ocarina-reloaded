@@ -12,27 +12,10 @@ var channelUrlAndCaps = {
   }
 };
 
-var subscriptionUrlAndCaps = {
-  url: "https://api.spire.io/account/Ac-qy8B/subscription/Su-qnQB",
-  capabilities: {
-    events: "7UNgwKv1AFuSCFzpPt2AjPw"
-  }
-};
-
-var channelsUrlAndCaps = {
-  url: "https://api.spire.io/account/Ac-qy8B/channels",
-  capabilities: {
-    all: "z3LNjUjVNL1jjcXJocicAQ",
-    'create': "3inMWdjF4pYxJxCFzAmnqhA",
-    get_by_name: "z3LNjUjVNL1jjcXJocicAQ"
-  }
-};
-
 var subscriptionsUrlAndCaps = {
   url: "https://api.spire.io/account/Ac-qy8B/subscriptions",
   capabilities: {
-    'create': "pot2U9GfBHDiMKWfVpBi55A",
-    get_by_name: "sNCFiiHpU7Sqs9xw2UKePAg"
+    'create': "pot2U9GfBHDiMKWfVpBi55A"
   }
 };
 
@@ -109,7 +92,6 @@ $(document).ready(function(){
 
     spire.api.sessionFromUrlAndCapabilities({
       resources: {
-        channels: channelsUrlAndCaps,
         subscriptions: subscriptionsUrlAndCaps
       },
       capabilities: {}
