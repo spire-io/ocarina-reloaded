@@ -1,5 +1,9 @@
 // This is the core of the app. This is where magic happens
 
+// We assign the player a number based on the timestamp
+var myPlayerNumber = Date.now();
+
+
 // Url and caps for channel and subscription
 var channelUrlAndCaps = {
   url: "https://api.spire.io/account/Ac-qy8B/channel/Ch-qzgC",
@@ -15,21 +19,38 @@ var subscriptionUrlAndCaps = {
   }
 };
 
+var channelsUrlAndCaps = {
+  url: "https://api.spire.io/account/Ac-qy8B/channels",
+  capabilities: {
+    all: "z3LNjUjVNL1jjcXJocicAQ",
+    'create': "3inMWdjF4pYxJxCFzAmnqhA",
+    get_by_name: "z3LNjUjVNL1jjcXJocicAQ"
+  }
+};
+
+var subscriptionsUrlAndCaps = {
+  url: "https://api.spire.io/account/Ac-qy8B/subscriptions",
+  capabilities: {
+    'create': "pot2U9GfBHDiMKWfVpBi55A",
+    get_by_name: "sNCFiiHpU7Sqs9xw2UKePAg"
+  }
+};
+
 // Actually channel and subscription that we will get from Spire with the above capabilities
 var channel = null;
 var subscription = null;
 
 // The messageListener runs for every message received.
 function messageListener (message) {
-  console.log('Message received: ' + message.content);
+  if (!myPlayerNumber) {
+    return;
+  }
 
   // If someone asks for our position, we send it.
   // Players ask for everyone else's position when they start playing.
   if (message.content === "Send me your positions"){
-    if (myPlayerNumber >= 0) {
-      // We add a "Welcome" item at the end so other players can count us
-      channel.publish({ playerNumber: myPlayerNumber, type: 'welcome', x: posX, y: posY });
-    }
+    // We add a "Welcome" item at the end so other players can count us
+    channel.publish({ playerNumber: myPlayerNumber, type: 'welcome', x: posX, y: posY });
   } else {
     // We transform the message into an array that stores the move data
     var moveData = message.content;
@@ -38,11 +59,19 @@ function messageListener (message) {
     // but we don't count undefined players and we don't count the current user.
     var playerNumber = moveData.playerNumber;
     if (playerNumber !== myPlayerNumber) {
-      console.log('HERE')
-      // Set the player number to true, so we don't use it for ourselves
       drawPlayer(playerNumber, moveData.x, moveData.y);
     }
   }
+}
+
+function joinListener (joinEvent) {
+  console.log('join detected');
+}
+
+function partListener (partEvent) {
+  console.log('part detected');
+
+  removePlayer(partEvent.subscription_name);
 }
 
 $(document).ready(function(){
@@ -61,25 +90,49 @@ $(document).ready(function(){
     }
 
     channel = chan;
-    spire.api.subscriptionFromUrlAndCapabilities(subscriptionUrlAndCaps, function (err, subscription) {
+
+    spire.api.sessionFromUrlAndCapabilities({
+      resources: {
+        channels: channelsUrlAndCaps,
+        subscriptions: subscriptionsUrlAndCaps
+      },
+      capabilities: {}
+    }, function (err, session) {
       if (err) {
-        console.error("Error getting subscription.");
+        console.error("Error getting session.");
         console.error(err);
         return;
       }
 
-      //TODO: checkAvailability();
-      // We add the listener to get every incoming message
-      subscription.addListener('message', messageListener);
+      session.createSubscription({
+        name: myPlayerNumber,
+        channelUrls: [channel.url()],
+        expiration: 60000
+      }, function (err, sub) {
+        if (err) {
+          console.error("Error getting subscription.");
+          console.error(err);
+          return;
+        }
+        subscription = sub;
 
-      // We need to startListening to get the messages
-      subscription.startListening({ min_timestamp: 'now' });
+        //TODO: checkAvailability();
+        // We add the listener to get every incoming message
+        subscription.addListener('message', messageListener);
 
-      // And let everyone we're here. We need to know where they are.              
-      channel.publish("Send me your positions");
+        subscription.addListener('join', joinListener);
 
-      // Start my player
-      initializeMyPlayer();
+        subscription.addListener('part', partListener);
+
+        // We need to startListening to get the messages
+        subscription.startListening({ min_timestamp: 'now' });
+
+        // And let everyone we're here. We need to know where they are.              
+        channel.publish("Send me your positions");
+
+        // Start my player
+        initializeMyPlayer();
+      });
     });
   });
   

@@ -2,13 +2,12 @@
 // NOTE: When do 'posX * 32' we do it because every square in the map is 32x32
 // That way, we move the player 32px on any direction when we press the keys.
 
-var myPlayerNumber; //Player number assigned to the user
 // User's position on the X and Y axis
 var posX = 0;
 var posY = 0;
 
 //Moves any player.
-function drawPlayer(playerNumber, x, y){
+function drawPlayer(playerNumber, x, y) {
   var playerName = "player-" + playerNumber;
   var playerClass = '.' + playerName;
   var avatarName = "player-" + (playerNumber % 10);
@@ -25,6 +24,12 @@ function drawPlayer(playerNumber, x, y){
   });
 }
 
+function removePlayer(playerNumber) {
+  var playerName = "player-" + playerNumber;
+  var playerClass = '.' + playerName;
+  $(playerClass).remove();
+}
+
 //Draws the user when they start playing
 function initializeMyPlayer(){
   // Positions to place the character randomly. 
@@ -34,9 +39,6 @@ function initializeMyPlayer(){
     posY = Math.floor(Math.random()*20);
   } while ((map[posY][posX] == 0) || (map[posY][posX] == 7));
   
-  // We assign the player a number based on the timestamp
-  myPlayerNumber = Date.now();
-
   drawPlayer(myPlayerNumber, posX, posY);
 
   // We send a Welcome message to let everyone else where we are.
