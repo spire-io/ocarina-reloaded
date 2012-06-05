@@ -5,6 +5,8 @@
 // User's position on the X and Y axis
 var posX = 0;
 var posY = 0;
+var killings = 0;
+var deaths = 0
 
 //Moves any player.
 function drawPlayer(playerNumber, x, y) {
@@ -69,4 +71,21 @@ function moveMyPosition (deltaX, deltaY) {
     drawPlayer(myPlayerNumber, posX, posY);
     channel.publish({ playerNumber: myPlayerNumber, type: 'move', x: posX, y: posY });
   }
+}
+
+function attack(){
+  channel.publish({ playerNumber: myPlayerNumber, type: 'attack', x: posX, y: posY });
+  if (anotherPlayerHere()){
+    killings++;
+    refreshStats();
+  }
+}
+
+function anotherPlayerHere(){
+  return false;
+}
+
+function relocatePlayer(){
+  removePlayer(myPlayerNumber);
+  setTimeout(initializeMyPlayer, 5000);
 }

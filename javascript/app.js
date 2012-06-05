@@ -51,7 +51,10 @@ function messageListener (message) {
   if (message.content === "Send me your positions"){
     // We add a "Welcome" item at the end so other players can count us
     channel.publish({ playerNumber: myPlayerNumber, type: 'welcome', x: posX, y: posY });
-  } else {
+    return;
+  }
+  
+  if (message.content.type === 'move'){
     // We transform the message into an array that stores the move data
     var moveData = message.content;
     
@@ -60,6 +63,14 @@ function messageListener (message) {
     var playerNumber = moveData.playerNumber;
     if (playerNumber !== myPlayerNumber) {
       drawPlayer(playerNumber, moveData.x, moveData.y);
+    }
+  }
+  
+  if ((message.content.type === 'attack') && (message.content.playerNumber !== myPlayerNumber)){
+    if ((message.content.x === posX) && (message.content.y === posY)){
+      deaths++;
+      refreshStats();
+      relocatePlayer();
     }
   }
 }
@@ -72,6 +83,11 @@ function partListener (partEvent) {
   console.log('part detected');
 
   removePlayer(partEvent.subscription_name);
+}
+
+function refreshStats() {
+  $('.stats').html("You have killed " + killings + " people</br>");
+  $('.stats').append("You have been killed " + deaths + " times</br>");
 }
 
 $(document).ready(function(){
@@ -134,6 +150,8 @@ $(document).ready(function(){
         initializeMyPlayer();
       });
     });
+    
+    refreshStats();
   });
   
   // Listener for keydown. We move our avatar and send our position
@@ -141,6 +159,10 @@ $(document).ready(function(){
   document.onkeydown = function(evt) {
     evt = evt || window.event;
     switch (evt.keyCode) {
+      case 32:
+        // Space bar
+        attack();
+        break;
       case 37:
         // Left arrow
         moveMyPosition(-1, 0);
