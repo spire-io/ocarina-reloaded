@@ -4,25 +4,50 @@
   <title>O C A R I N A</title>
 
   <link rel="stylesheet" type="text/css" media="all" href="./css/style.css" />
+  <script type='text/javascript' lang='javascript' src='./javascript/spire.io.bundle.js'></script>
   <script type="text/javascript" src="./javascript/jquery.js"></script>
   <script type="text/javascript" src="./javascript/app.js"></script>
   <script type="text/javascript" src="./javascript/map.js"></script>
   <script type="text/javascript" src="./javascript/players.js"></script>
-  <script type='text/javascript' lang='javascript' src='./javascript/spire.io.bundle.js'></script>
   
   </head>
   <body class="body-game">
-      <div class="header">
-        <h1>Ocarina</h1>
+    <div class="header">
+      <h1>Ocarina</h1>
+    </div>
+    <div class="gameBox">
+        <div class="canvas"></div>
+        <div class="playerList"></div>
+        <div class="stats"></div>
+    </div>
+
+    <form action="#" id="authenticationForm" method="post">
+      <div class="input-wrapper">
+        <label for="login">Login</label>
+        <input type="text"
+          id="login"
+          placeholder="Username" />
+
+        <div class="clear"><!-- --></div>
       </div>
-      <div>
-          <div id="gjs-loader">
-           
-          </div>
-          <div class="canvas"></div>
-          <div class="playerList"></div>
-          <div class="stats"></div>
+
+      <div class="input-wrapper">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Password"/>
+
+        <div class="clear"><!-- --></div>
       </div>
+
+      <input type="submit"
+        id="joinButton"
+        value="Join" />
+
+      <input type="submit"
+        id="loginButton"
+        value="Login" />
+
+      <div class="clear"><!-- --></div>
+    </form>
       
   </body>
 </html>

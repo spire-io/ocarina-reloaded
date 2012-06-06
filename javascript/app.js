@@ -1,8 +1,13 @@
 // This is the core of the app. This is where magic happens
 
+//We load Spire and instantiate it
+var Spire = require('./spire.io.js');
+var spire = new Spire();
+
+var APP_KEY = "Ap-rEYB";
+
 // We assign the player a number based on the timestamp
 var myPlayerNumber = Date.now();
-
 
 // Url and caps for channel and subscription
 var channelUrlAndCaps = {
@@ -73,13 +78,11 @@ function refreshStats() {
   $('.stats').append("You have been killed " + deaths + " times</br>");
 }
 
-$(document).ready(function(){
-  //We load Spire and instantiate it
-  var Spire = require('./spire.io.js');
-  var spire = new Spire();
-
+function startGame() {
   // Start by drawing the map
   drawMap();
+
+  toggleViews();
 
   spire.api.channelFromUrlAndCapabilities(channelUrlAndCaps, function (err, chan) {
     if (err) {
@@ -135,41 +138,109 @@ $(document).ready(function(){
     
     refreshStats();
   });
-  
-  // Listener for keydown. We move our avatar and send our position
-  // The structure of the move message is "playerName/axisXposition/axisYposition"
-  document.onkeydown = function(evt) {
-    evt = evt || window.event;
-    switch (evt.keyCode) {
-      case 32:
-        evt.preventDefault();
-        // Space bar
-        attack();
-        break;
-      case 37:
-        evt.preventDefault();
-        // Space bar
-        // Left arrow
-        moveMyPosition(-1, 0);
-        break;
-      case 38:
-        evt.preventDefault();
-        // Space bar
-        // Up arrow
-        moveMyPosition(0, -1);
-        break;
-      case 39:
-        evt.preventDefault();
-        // Space bar
-        // Right arrow
-        moveMyPosition(1, 0);
-        break;
-      case 40:
-        evt.preventDefault();
-        // Space bar
-        // Down arrow
-        moveMyPosition(0, 1);
-        break;
+}
+
+$(document).ready(function(){
+  // Authentication Form elements
+  var authenticationForm = $('#authenticationForm')
+    , loginInput = authenticationForm.find('#login')
+    , passwordInput = authenticationForm.find('#password')
+    , loginButton = authenticationForm.find('#loginButton')
+    , joinButton = authenticationForm.find('#joinButton')
+    , gameBox = $('.gameBox')
+    ;
+
+  // Toggle between login form and note view
+  function toggleView () {
+    loginInput.val('');
+    passwordInput.val('');
+
+    authenticationForm.toggle();
+    gameBox.toggle();
+  }
+
+  // Login button listener
+  loginButton.click(function (e) {
+    e.preventDefault();
+
+    var login = loginInput.val();
+    var password = passwordInput.val();
+
+    if (!login.length || !password.length) {
+      alert("Please enter a valid login and password.");
+      return;
     }
-  };
+
+    spire.getApplication(APP_KEY, function (err, app) {
+      if (err) return console.error(err);
+      app.authenticateMember(login, password, function (err, member) {
+        if (err) return alert("Unauthorized!");
+        console.log('Authentication Successful');
+
+        myMember = member;
+        toggleView();
+        showNotes();
+      });
+    });
+  });
+
+  // Join button listener
+  joinButton.click(function (e) {
+    e.preventDefault();
+
+    var login = loginInput.val();
+    var password = passwordInput.val();
+
+    if (!login.length || !password.length) {
+      alert("Please enter a valid login and password.");
+      return;
+    }
+
+    spire.getApplication(APP_KEY, function (err, app) {
+      if (err) return console.error(err);
+
+      app.createMember(login, password, function (err, member) {
+        if (err && err.status === 409) return alert("User already exists!")
+        if (err) return alert("Problem creating user!");
+        console.log('Registration Successful');
+
+        myMember = member;
+        toggleView();
+        showNotes();
+      });
+    });
+  });
 });
+
+function keyListener(evt) {
+  evt = evt || window.event;
+  switch (evt.keyCode) {
+    case 32:
+      evt.preventDefault();
+      // Space bar
+      attack();
+      break;
+    case 37:
+      evt.preventDefault();
+      // Left arrow
+      moveMyPosition(-1, 0);
+      break;
+    case 38:
+      evt.preventDefault();
+      // Up arrow
+      moveMyPosition(0, -1);
+      break;
+    case 39:
+      evt.preventDefault();
+      // Right arrow
+      moveMyPosition(1, 0);
+      break;
+    case 40:
+      evt.preventDefault();
+      // Down arrow
+      moveMyPosition(0, 1);
+      break;
+  }
+}
+
+
