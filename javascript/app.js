@@ -6,7 +6,8 @@ var spire = new Spire();
 
 var APP_KEY = "Ap-rEYB";
 
-// Url and caps for channel and subscription
+// Url and publish cap for channel.
+// Allows uses to publish their movements and attacks.
 var channelUrlAndCaps = {
   url: "https://api.spire.io/account/Ac-qy8B/channel/Ch-qzgC",
   capabilities: {
@@ -14,16 +15,14 @@ var channelUrlAndCaps = {
   }
 };
 
+// Url and creation cap for subscriptions.
+// Allows members to create their own subscriptions.
 var subscriptionsUrlAndCaps = {
   url: "https://api.spire.io/account/Ac-qy8B/subscriptions",
   capabilities: {
     'create': "pot2U9GfBHDiMKWfVpBi55A"
   }
 };
-
-// Actually channel and subscription that we will get from Spire with the above capabilities
-var channel = null;
-var subscription = null;
 
 function init() {
   // Authentication Form elements
