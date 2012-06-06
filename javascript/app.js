@@ -127,7 +127,7 @@ function init() {
           }
 
           // Try to get the subscription to make sure it still exists
-          sub.retrieveEvents({}, function (err) {
+          sub.retrieveEvents({limit: 1, last: 0, timeout: 0}, function (err) {
             if (err) {
               // Subscription has expired on us
               createSubscription(function (err, sub) {
