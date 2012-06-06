@@ -142,22 +142,31 @@ $(document).ready(function(){
     evt = evt || window.event;
     switch (evt.keyCode) {
       case 32:
+        evt.preventDefault();
         // Space bar
         attack();
         break;
       case 37:
+        evt.preventDefault();
+        // Space bar
         // Left arrow
         moveMyPosition(-1, 0);
         break;
       case 38:
+        evt.preventDefault();
+        // Space bar
         // Up arrow
         moveMyPosition(0, -1);
         break;
       case 39:
+        evt.preventDefault();
+        // Space bar
         // Right arrow
         moveMyPosition(1, 0);
         break;
       case 40:
+        evt.preventDefault();
+        // Space bar
         // Down arrow
         moveMyPosition(0, 1);
         break;
