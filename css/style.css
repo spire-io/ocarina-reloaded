@@ -328,6 +328,10 @@ input[type=submit]:active {
   display: none;
 }
 
+.stats {
+  color: white;
+}
+
 /* this is temp until we add modernaizer tool*/
 .clear:before, .clear:after { content: ""; display: table; }
 .clear:after { clear: both; }
