@@ -4,8 +4,12 @@ function Ocarina (member) {
   this.profile = member.profile();
 
   this.myPlayerNumber = this.profile.myPlayerNumber;
-  this.deaths = this.profile.deaths;
-  this.kills = this.profile.kills;
+  this.profile.deaths = this.profile.deaths || 0;
+  this.profile.kills = this.profile.kills || 0;
+
+  this.map = new Map();
+
+  this.updateMyStats();
 
   this.posY = 0;
   this.posX = 0;
@@ -15,8 +19,6 @@ Ocarina.prototype.start = function (channel, sub) {
   this.channel = channel;
   this.sub = sub;
 
-  // Draw the map
-  this.map = new Map();
   this.map.draw();
 
   var ocarina = this;
@@ -78,7 +80,7 @@ Ocarina.prototype.attack = function () {
   var playersAttacked = this.map.getPlayersAtPosition(this.posX, this.posY);
 
   if (playersAttacked.length >= 2) {
-    this.killings += (playersAttacked.length -1)
+    this.profile.kills += (playersAttacked.length -1)
     this.updateMyStats();
   }
 };
@@ -86,8 +88,8 @@ Ocarina.prototype.attack = function () {
 Ocarina.prototype.updateMyStats = function () {
   this.updateProfile();
   this.map.updateStats({
-    kills: this.kills,
-    deaths: this.deaths
+    kills: this.profile.kills,
+    deaths: this.profile.deaths
   });
 };
 
@@ -107,7 +109,7 @@ Ocarina.prototype.messageListener = function (message) {
   
   if ((message.content.type === 'attack') && (message.content.playerNumber !== this.myPlayerNumber)){
     if ((message.content.x === this.posX) && (message.content.y === this.posY)){
-      this.deaths++;
+      this.profile.deaths++;
       this.updateMyStats();
       this.moveToRandomPosition();
     }
