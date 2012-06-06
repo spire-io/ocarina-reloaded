@@ -113,7 +113,7 @@ function init() {
           session.createSubscription({
             name: profile.myPlayerNumber,
             channelUrls: [channel.url()],
-            expiration: 60000
+            expiration: 10000
           }, cb);
         });
       }
