@@ -74,7 +74,7 @@ Map.prototype.removePlayer = function(playerNumber) {
   var playerName = "player-" + playerNumber;
   var playerClass = '.' + playerName;
   $(playerClass).remove();
-  delete this.playerLocations[playerName];
+  delete this.playerLocations[playerNumber];
 };
 
 Map.prototype.getPlayerPosition = function (playerNumber) {
