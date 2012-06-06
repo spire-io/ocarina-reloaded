@@ -1,9 +1,11 @@
 function Ocarina (member) {
   this.member = member;
-  this.myPlayerNumber = Date.now();
 
-  this.deaths = 0;
-  this.kills = 0;
+  this.profile = member.profile();
+
+  this.myPlayerNumber = this.profile.myPlayerNumber;
+  this.deaths = this.profile.deaths;
+  this.kills = this.profile.kills;
 
   this.posY = 0;
   this.posX = 0;
@@ -30,6 +32,15 @@ Ocarina.prototype.start = function (channel, sub) {
 
   this.moveToRandomPosition();
 };
+
+Ocarina.prototype.updateProfile = function () {
+  this.member.update({
+    profile: this.profile
+  }, function (err) {
+    if (err) console.error ("Error updating profile.")
+  });
+};
+
 
 Ocarina.prototype.moveToRandomPosition = function () {
   var randomPosition = this.map.getRandomValidPosition();
@@ -73,6 +84,7 @@ Ocarina.prototype.attack = function () {
 };
 
 Ocarina.prototype.updateMyStats = function () {
+  this.updateProfile();
   this.map.updateStats({
     kills: this.kills,
     deaths: this.deaths

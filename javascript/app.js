@@ -86,7 +86,6 @@ function init() {
   function startGame (member) {
     authenticationForm.hide();
     gameBox.show();
-    ocarina = new Ocarina(member);
 
     spire.api.channelFromUrlAndCapabilities(channelUrlAndCaps, function (err, channel) {
       if (err) {
@@ -95,32 +94,69 @@ function init() {
         return;
       }
 
-      spire.api.sessionFromUrlAndCapabilities({
-        resources: {
-          subscriptions: subscriptionsUrlAndCaps
-        },
-        capabilities: {}
-      }, function (err, session) {
-        if (err) {
-          console.error("Error getting session.");
-          console.error(err);
-          return;
-        }
+      function createSubscription(cb) {
+        spire.api.sessionFromUrlAndCapabilities({
+          resources: {
+            subscriptions: subscriptionsUrlAndCaps
+          },
+          capabilities: {}
+        }, function (err, session) {
+          if (err) {
+            console.error("Error getting session.");
+            console.error(err);
+            return;
+          }
 
-        session.createSubscription({
-          name: ocarina.myPlayerNumber,
-          channelUrls: [channel.url()],
-          expiration: 60000
-        }, function (err, sub) {
+          var profile = member.profile();
+          profile.myPlayerNumber = profile.myPlayerNumber || Date.now();
+
+          session.createSubscription({
+            name: profile.myPlayerNumber,
+            channelUrls: [channel.url()],
+            expiration: 60000
+          }, cb);
+        });
+      }
+
+      if (member.profile().subscriptionUrlAndCaps) {
+        spire.api.subscriptionFromUrlAndCapabilities(member.profile().subscriptionUrlAndCaps, function (err, sub) {
           if (err) {
             console.error("Error getting subscription.");
             console.error(err);
             return;
           }
 
+          // Try to get the subscription to make sure it still exists
+          sub.retrieveEvents({}, function (err) {
+            if (err) {
+              // Subscription has expired on us
+              createSubscription(function (err, sub) {
+                ocarina = new Ocarina(member);
+                ocarina.member.profile().subscriptionUrlAndCaps = sub.data;
+                ocarina.updateProfile();
+                ocarina.start(channel, sub);
+              });
+            } else {
+              // Subscription is good to go
+              ocarina = new Ocarina(member);
+              ocarina.start(channel, sub);
+            }
+          });
+        });
+      } else {
+        createSubscription(function (err, sub) {
+          if (err) {
+            console.error("Error getting subscription.");
+            console.error(err);
+            return;
+          }
+
+          ocarina = new Ocarina(member);
+          ocarina.member.profile().subscriptionUrlAndCaps = sub.data;
+          ocarina.updateProfile();
           ocarina.start(channel, sub);
         });
-      });
+      }
     });
   }
 }
