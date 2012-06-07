@@ -34,7 +34,7 @@ Ocarina.prototype.start = function (channel, sub) {
 
   document.addEventListener('keydown', function (e) { ocarina.keyListener(e); });
 
-  this.sendPositionRequest();
+  this.send('position_request');
   this.moveToRandomPosition();
 };
 
@@ -62,46 +62,21 @@ Ocarina.prototype.moveMyPosition = function (x, y) {
     this.posX = x;
     this.posY = y;
     this.map.drawPlayer(this.myPlayerNumber, this.posX, this.posY);
-    this.sendMyPosition();
+    this.send('move');
   }
 };
 
-Ocarina.prototype.sendMyPosition = function () {
+Ocarina.prototype.send = function (eventType) {
   this.channel.publish({
     playerNumber: this.myPlayerNumber,
-    type: 'move',
-    x: this.posX,
-    y: this.posY
-  });
-};
-
-Ocarina.prototype.sendPositionRequest = function () {
-  this.channel.publish({
-    playerNumber: this.myPlayerNumber,
-    type: 'position_request'
-  });
-};
-
-Ocarina.prototype.sendDeath = function () {
-  this.channel.publish({
-    playerNumber: this.myPlayerNumber,
-    type: 'death',
-    x: this.posX,
-    y: this.posY
-  });
-};
-
-Ocarina.prototype.sendAttack = function () {
-  this.channel.publish({
-    playerNumber: this.myPlayerNumber,
-    type: 'attack',
+    type: eventType,
     x: this.posX,
     y: this.posY
   });
 };
 
 Ocarina.prototype.attack = function () {
-  this.sendAttack();
+  this.send('attack');
 
   var playersAttacked = this.map.getPlayersAtPosition(this.posX, this.posY);
 
@@ -138,7 +113,7 @@ Ocarina.prototype.messageListener = function (message) {
   }
 
   if (message.content.type === "position_request") {
-    this.sendMyPosition();
+    this.send('move');
     return;
   }
 
