@@ -86,7 +86,7 @@ Ocarina.prototype.attack = function () {
     if (!t.isDead) {
       t.map.drawPlayer(t.myPlayerNumber, t.posX, t.posY, false);
     }
-  }, 300);
+  }, 100);
 
   var playersAttacked = this.map.getPlayersAtPosition(this.posX, this.posY);
 
