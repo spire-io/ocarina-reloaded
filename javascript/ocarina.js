@@ -50,14 +50,14 @@ Ocarina.prototype.moveToRandomPosition = function () {
   var randomPosition = this.map.getRandomValidPosition();
 
   // Draws our position and sends to all players
-  this.moveMyPosition(randomPosition.x, randomPosition.y);
+  this.moveMyPositionTo(randomPosition.x, randomPosition.y);
 };
 
 Ocarina.prototype.moveMyPositionBy = function (deltaX, deltaY) {
-  this.moveMyPosition(this.posX + deltaX, this.posY + deltaY);
+  this.moveMyPositionTo(this.posX + deltaX, this.posY + deltaY);
 };
 
-Ocarina.prototype.moveMyPosition = function (x, y) {
+Ocarina.prototype.moveMyPositionTo = function (x, y) {
   if (this.map.isValidPosition(x, y)) {
     this.posX = x;
     this.posY = y;
