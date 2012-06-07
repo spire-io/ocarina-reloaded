@@ -57,8 +57,7 @@ Map.prototype.drawPlayer = function (playerNumber, x, y) {
     avatarName += '-active';
   }
 
-  // Remove any dead player
-  $(playerClass + '-dead').remove();
+  this.removeDeadPlayer(playerNumber);
 
   // Check to see if player is already on the board
   if ($(playerClass).length === 0) {
@@ -82,7 +81,17 @@ Map.prototype.removePlayer = function(playerNumber) {
   var playerName = "player-" + playerNumber;
   var playerClass = '.' + playerName;
   $(playerClass).remove();
+
+  this.removeDeadPlayer(playerNumber);
+
   delete this.playerLocations[playerNumber];
+};
+
+Map.prototype.removeDeadPlayer = function(playerNumber) {
+  var playerName = "player-" + playerNumber;
+  var playerClass = '.' + playerName + '-dead';
+  // Remove any dead player
+  $(playerClass).remove();
 };
 
 Map.prototype.drawDeadPlayer = function (playerNumber, x, y) {
