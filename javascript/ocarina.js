@@ -107,41 +107,38 @@ Ocarina.prototype.updateMyStats = function () {
 
 // The messageListener runs for every message received.
 Ocarina.prototype.messageListener = function (message) {
+  var messageData = message.content;
+  var messageType = messageData.type;
+
   // Ignore our own messages
-  if (message.content.playerNumber == this.myPlayerNumber) {
+  if (messageData.playerNumber == this.myPlayerNumber) {
     return;
   }
 
-  if (message.content.type === "position_request") {
+  if (messageType === "position_request") {
     this.send('move');
-    return;
   }
 
-  if (message.content.type === 'move'){
-    // We transform the message into an array that stores the move data
-    var moveData = message.content;
-    
-    // We count the players currently online, counting all welcome messages
-    // but we don't count undefined players and we don't count the current user.
-    var playerNumber = moveData.playerNumber;
-    if (playerNumber !== this.myPlayerNumber) {
-      this.map.drawPlayer(playerNumber, moveData.x, moveData.y);
+  if (messageType === 'move'){
+    if (messageData.playerNumber !== this.myPlayerNumber) {
+      this.map.drawPlayer(messageData.playerNumber, messageData.x, messageData.y);
     }
-    return;
   }
-  
-  if (message.content.type === 'attack') {
+
+  if (messageType === 'attack') {
     if (this.isDead) {
       return;
     }
 
-    if ((message.content.x == this.posX) && (message.content.y == this.posY)){
+    if ((messageData.x == this.posX) && (messageData.y == this.posY)){
       this.profile.deaths++;
       this.updateMyStats();
 
       this.map.drawDeadPlayer(this.myPlayerNumber, this.posX, this.posY);
 
       this.isDead = true;
+
+      this.send('death');
 
       // Wait 5 seconds before respawning
       var t = this;
@@ -150,15 +147,10 @@ Ocarina.prototype.messageListener = function (message) {
         t.moveToRandomPosition();
       }, 5000);
     }
-    return;
   }
 
-  if (message.content.type === 'death') {
-    var deathData = message.content;
-    var playerNumber = deathData.playerNumber;
-    this.map.drawDeadPlayer(playerNumber, deathData.x, deathData.y);
-
-    return;
+  if (messageType === 'death') {
+    this.map.drawDeadPlayer(messageData.playerNumber, messageData.x, messageData.y);
   }
 };
 
