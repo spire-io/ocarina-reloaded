@@ -8,8 +8,9 @@
 // The numbers will be part of the image name: terrain-0, terrain-1, ...
 
 // Map constructor
-function Map() {
+function Map(myPlayerNumber) {
   this.playerLocations = {};
+  this.myPlayerNumber = myPlayerNumber;
 };
 
 // We initialize the map matrix drawing whatever we want
@@ -51,6 +52,10 @@ Map.prototype.drawPlayer = function (playerNumber, x, y) {
   var playerName = "player-" + playerNumber;
   var playerClass = '.' + playerName;
   var avatarName = "player-" + (playerNumber % 10);
+
+  if (playerNumber === this.myPlayerNumber) {
+    avatarName += '-active';
+  }
 
   // Check to see if player is already on the board
   if ($(playerClass).length === 0) {

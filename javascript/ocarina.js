@@ -7,7 +7,7 @@ function Ocarina (member) {
   this.profile.deaths = this.profile.deaths || 0;
   this.profile.kills = this.profile.kills || 0;
 
-  this.map = new Map();
+  this.map = new Map(this.myPlayerNumber);
 
   this.updateMyStats();
 
