@@ -11,6 +11,7 @@
 function Map(myPlayerNumber) {
   this.playerLocations = {};
   this.myPlayerNumber = myPlayerNumber;
+  this.playerStats = {}
 };
 
 // We initialize the map matrix drawing whatever we want
@@ -118,6 +119,17 @@ Map.prototype.getPlayersAtPosition = function (x, y) {
 Map.prototype.updateStats = function (stats) {
   $('.stats').html("You have killed " + stats.kills + " people</br>");
   $('.stats').append("You have been killed " + stats.deaths + " times</br>");
+  
+  this.playerStats[this.myPlayerNumber] = {
+    kills: stats.kills,
+    deaths: stats.deaths
+  }
+  
+  $('.playerList').html("");
+  
+  for(var player in this.playerStats){
+    $('.playerList').append(stats.kills + " / " + stats.deaths + "</br>");
+  }
 };
 
 // Returns true if the position is on the map, and is not rocks or water.
