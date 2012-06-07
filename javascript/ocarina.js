@@ -78,6 +78,16 @@ Ocarina.prototype.send = function (eventType) {
 Ocarina.prototype.attack = function () {
   this.send('attack');
 
+  this.map.drawPlayer(this.myPlayerNumber, this.posX, this.posY, true);
+
+  // Remove the attack avatar
+  var t = this;
+  setTimeout(function () {
+    if (!t.isDead) {
+      t.map.drawPlayer(t.myPlayerNumber, t.posX, t.posY, false);
+    }
+  }, 300);
+
   var playersAttacked = this.map.getPlayersAtPosition(this.posX, this.posY);
 
   // We are the only player attacked.
