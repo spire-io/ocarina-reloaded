@@ -13,6 +13,8 @@ function Ocarina (member) {
 
   this.posY = 0;
   this.posX = 0;
+
+  this.isDead = false;
 }
 
 Ocarina.prototype.start = function (channel, sub) {
@@ -43,7 +45,6 @@ Ocarina.prototype.updateProfile = function () {
     if (err) console.error ("Error updating profile.")
   });
 };
-
 
 Ocarina.prototype.moveToRandomPosition = function () {
   var randomPosition = this.map.getRandomValidPosition();
@@ -81,21 +82,44 @@ Ocarina.prototype.sendPositionRequest = function () {
   });
 };
 
+Ocarina.prototype.sendDeath = function () {
+  this.channel.publish({
+    playerNumber: this.myPlayerNumber,
+    type: 'death',
+    x: this.posX,
+    y: this.posY
+  });
+};
 
-Ocarina.prototype.attack = function () {
+Ocarina.prototype.sendAttack = function () {
   this.channel.publish({
     playerNumber: this.myPlayerNumber,
     type: 'attack',
     x: this.posX,
     y: this.posY
   });
+};
+
+Ocarina.prototype.attack = function () {
+  this.sendAttack();
 
   var playersAttacked = this.map.getPlayersAtPosition(this.posX, this.posY);
 
-  if (playersAttacked.length >= 2) {
-    this.profile.kills += (playersAttacked.length -1)
-    this.updateMyStats();
+  // We are the only player attacked.
+  if (playersAttacked.length <= 1) {
+    return;
   }
+
+  for (var i = 0; i < playersAttacked.length; i++) {
+    var playerNumber = playersAttacked[i];
+    if (playerNumber == this.myPlayerNumber) {
+      continue;
+    }
+    this.profile.kills++
+    this.map.drawDeadPlayer(playerNumber, this.posX, this.posY);
+  }
+
+  this.updateMyStats();
 };
 
 Ocarina.prototype.updateMyStats = function () {
@@ -108,6 +132,11 @@ Ocarina.prototype.updateMyStats = function () {
 
 // The messageListener runs for every message received.
 Ocarina.prototype.messageListener = function (message) {
+  // Ignore our own messages
+  if (message.content.playerNumber == this.myPlayerNumber) {
+    return;
+  }
+
   if (message.content.type === "position_request") {
     this.sendMyPosition();
     return;
@@ -126,12 +155,34 @@ Ocarina.prototype.messageListener = function (message) {
     return;
   }
   
-  if ((message.content.type === 'attack') && (message.content.playerNumber !== this.myPlayerNumber)){
-    if ((message.content.x === this.posX) && (message.content.y === this.posY)){
+  if (message.content.type === 'attack') {
+    if (this.isDead) {
+      return;
+    }
+
+    if ((message.content.x == this.posX) && (message.content.y == this.posY)){
       this.profile.deaths++;
       this.updateMyStats();
-      this.moveToRandomPosition();
+
+      this.map.drawDeadPlayer(this.myPlayerNumber, this.posX, this.posY);
+
+      this.isDead = true;
+
+      // Wait 5 seconds before respawning
+      var t = this;
+      setTimeout(function () {
+        t.isDead = false;
+        t.moveToRandomPosition();
+      }, 5000);
     }
+    return;
+  }
+
+  if (message.content.type === 'death') {
+    var deathData = message.content;
+    var playerNumber = deathData.playerNumber;
+    this.map.drawDeadPlayer(playerNumber, deathData.x, deathData.y);
+
     return;
   }
 };
@@ -147,6 +198,12 @@ Ocarina.prototype.partListener = function (partEvent) {
 
 Ocarina.prototype.keyListener = function (evt) {
   evt = evt || window.event;
+
+  if (this.isDead) {
+    evt.preventDefault();
+    return;
+  }
+
   switch (evt.keyCode) {
     case 32:
       // Space bar
