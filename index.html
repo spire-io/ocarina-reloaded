@@ -9,11 +9,13 @@
   <script type="text/javascript" src="./javascript/app.js"></script>
   <script type="text/javascript" src="./javascript/map.js"></script>
   <script type="text/javascript" src="./javascript/ocarina.js"></script>
+  <link href='http://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
   
   </head>
   <body class="body-game">
     <div class="header">
-      <h1>Ocarina</h1>
+      <h2>Ocarina</h2>
+      <h4>powered by spire.io</h4>
     </div>
     <div class="gameBox">
         <div class="canvas"></div>
@@ -21,33 +23,40 @@
         <div class="stats"></div>
     </div>
 
-    <form action="#" id="authenticationForm" method="post">
-      <div class="input-wrapper">
-        <label for="login">Login</label>
-        <input type="text"
-          id="login"
-          placeholder="Username" />
+    <div id="login-container">
+      <form action="#" id="authenticationForm" method="post">
+        <div class="input-wrapper">
+          <label class="label-login" for="login">Login</label>
+          <img class="login-focus" src="images/sprites/player-7.png" alt="player-7" width="32" height="32" />
+          <input type="text"
+            id="login"
+            placeholder="Choose a username" />
+  
+          <div class="clear"><!-- --></div>
+        </div>
+  
+        <div class="input-wrapper">
+          <label class="label-password" for="password">Password</label>
+          <img class="password-focus" src="images/sprites/player-7.png" alt="player-7" width="32" height="32" />
+          <input type="password" id="password" name="password" placeholder="Your secret password"/>
+  
+          <div class="clear"><!-- --></div>
+        </div>
 
+        <div class="buttons">
+          <input type="submit"
+            id="joinButton"
+            title="Create a new user."
+            value="Create User" />
+    
+          <input type="submit"
+            id="loginButton"
+            title="Continue with existing user."
+            value="Login" />
+        </div>
+  
         <div class="clear"><!-- --></div>
-      </div>
-
-      <div class="input-wrapper">
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" placeholder="Password"/>
-
-        <div class="clear"><!-- --></div>
-      </div>
-
-      <input type="submit"
-        id="joinButton"
-        value="Join" />
-
-      <input type="submit"
-        id="loginButton"
-        value="Login" />
-
-      <div class="clear"><!-- --></div>
-    </form>
-      
+      </form>
+    </div>      
   </body>
 </html>

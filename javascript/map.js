@@ -78,7 +78,7 @@ Map.prototype.drawPlayer = function (playerNumber, x, y, attacking) {
 
   $(playerClass).css({
     left: 32*x,
-    top: 32*y
+    top: (32*y)
   });
 
   this.playerLocations[playerNumber] = {
@@ -136,8 +136,8 @@ Map.prototype.getPlayersAtPosition = function (x, y) {
 };
 
 Map.prototype.updateStats = function (stats) {
-  $('.stats').html("You have killed " + stats.kills + " people</br>");
-  $('.stats').append("You have been killed " + stats.deaths + " times</br>");
+  $('.stats').html('<img src="images/sprites/kill-stat.png" alt="kill-stat" width="26" height="21" /> You have killed ' + stats.kills + ' people</br>');
+  $('.stats').append('<img src="images/sprites/dead-stat.png" alt="kill-stat" width="26" height="21" /> You have been killed ' + stats.deaths + ' times</br>');
 };
 
 // Returns true if the position is on the map, and is not rocks or water.
