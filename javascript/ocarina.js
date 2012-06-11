@@ -2,14 +2,13 @@ function Ocarina (member) {
   this.member = member;
 
   this.profile = member.profile();
-
+  
+  this.myName = member.data.login;
   this.myPlayerNumber = this.profile.myPlayerNumber;
   this.profile.deaths = this.profile.deaths || 0;
   this.profile.kills = this.profile.kills || 0;
 
   this.map = new Map(this.myPlayerNumber);
-
-  this.updateMyStats();
 
   this.posY = 0;
   this.posX = 0;
@@ -33,6 +32,8 @@ Ocarina.prototype.start = function (channel, sub) {
   sub.startListening({ min_timestamp: 'now' });
 
   document.addEventListener('keydown', function (e) { ocarina.keyListener(e); });
+
+  this.send('stats');
 
   this.send('position_request');
   this.moveToRandomPosition();
@@ -68,10 +69,13 @@ Ocarina.prototype.moveMyPositionTo = function (x, y) {
 
 Ocarina.prototype.send = function (eventType) {
   this.channel.publish({
+    playerName: this.myName,
     playerNumber: this.myPlayerNumber,
     type: eventType,
     x: this.posX,
-    y: this.posY
+    y: this.posY,
+    kills: this.profile.kills,
+    deaths: this.profile.deaths
   });
 };
 
@@ -103,22 +107,34 @@ Ocarina.prototype.attack = function () {
     this.profile.kills++
     this.map.drawDeadPlayer(playerNumber, this.posX, this.posY);
   }
-
-  this.updateMyStats();
+  this.updateProfile();
+  this.send('stats');
+  //this.updateMyStats();
 };
 
-Ocarina.prototype.updateMyStats = function () {
+/*Ocarina.prototype.updateMyStats = function () {
   this.updateProfile();
   this.map.updateStats({
+    playerNumber: this.myPlayerNumber,
     kills: this.profile.kills,
     deaths: this.profile.deaths
   });
-};
+  this.send('stats');
+};*/
 
 // The messageListener runs for every message received.
 Ocarina.prototype.messageListener = function (message) {
   var messageData = message.content;
   var messageType = messageData.type;
+  
+  if (messageType === 'stats'){
+    this.map.updateStats({
+      playerName: messageData.playerName,
+      playerNumber: messageData.playerNumber,
+      kills: messageData.kills,
+      deaths: messageData.deaths
+    });
+  }
 
   // Ignore our own messages
   if (messageData.playerNumber == this.myPlayerNumber) {
@@ -132,6 +148,7 @@ Ocarina.prototype.messageListener = function (message) {
   if (messageType === 'move'){
     if (messageData.playerNumber !== this.myPlayerNumber) {
       this.map.drawPlayer(messageData.playerNumber, messageData.x, messageData.y);
+      this.send('stats');
     }
   }
 
@@ -142,7 +159,8 @@ Ocarina.prototype.messageListener = function (message) {
 
     if ((messageData.x == this.posX) && (messageData.y == this.posY)){
       this.profile.deaths++;
-      this.updateMyStats();
+      this.updateProfile();
+      this.send('stats');
 
       this.map.drawDeadPlayer(this.myPlayerNumber, this.posX, this.posY);
 

@@ -137,18 +137,23 @@ Map.prototype.getPlayersAtPosition = function (x, y) {
 };
 
 Map.prototype.updateStats = function (stats) {
-  $('.stats').html('<img src="images/sprites/kill-stat.png" alt="kill-stat" width="26" height="21" /> You have killed ' + stats.kills + ' people</br>');
-  $('.stats').append('<img src="images/sprites/dead-stat.png" alt="kill-stat" width="26" height="21" /> You have been killed ' + stats.deaths + ' times</br>');
-  
-  this.playerStats[this.myPlayerNumber] = {
-    kills: stats.kills,
-    deaths: stats.deaths
+  if (stats.playerNumber === this.myPlayerNumber){
+    $('.stats').html('<img src="images/sprites/kill-stat.png" alt="kill-stat" width="26" height="21" /> You have killed ' + stats.kills + ' people</br>');
+    $('.stats').append('<img src="images/sprites/dead-stat.png" alt="kill-stat" width="26" height="21" /> You have been killed ' + stats.deaths + ' times</br>');
   }
-  
+  this.playerStats[stats.playerNumber] = {
+    kills: stats.kills,
+    deaths: stats.deaths,
+    playerName: stats.playerName
+  }
+  this.updatePlayerList();
+};
+
+Map.prototype.updatePlayerList = function () {
   $('.playerList').html("");
   
   for(var player in this.playerStats){
-    $('.playerList').append(stats.kills + " / " + stats.deaths + "</br>");
+    $('.playerList').append(this.playerStats[player].playerName.toUpperCase() + ": " + this.playerStats[player].kills + " / " + this.playerStats[player].deaths + "</br>");
   }
 };
 
