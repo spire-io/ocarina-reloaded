@@ -109,18 +109,7 @@ Ocarina.prototype.attack = function () {
   }
   this.updateProfile();
   this.send('stats');
-  //this.updateMyStats();
 };
-
-/*Ocarina.prototype.updateMyStats = function () {
-  this.updateProfile();
-  this.map.updateStats({
-    playerNumber: this.myPlayerNumber,
-    kills: this.profile.kills,
-    deaths: this.profile.deaths
-  });
-  this.send('stats');
-};*/
 
 // The messageListener runs for every message received.
 Ocarina.prototype.messageListener = function (message) {
