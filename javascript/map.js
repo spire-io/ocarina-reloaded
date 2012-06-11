@@ -49,26 +49,37 @@ Map.prototype.draw = function () {
 };
 
 //Moves any player.
-Map.prototype.drawPlayer = function (playerNumber, x, y) {
+Map.prototype.drawPlayer = function (playerNumber, x, y, attacking) {
   var playerName = "player-" + playerNumber;
   var playerClass = '.' + playerName;
   var avatarName = "player-" + (playerNumber % 10);
 
+  attacking = attacking || false;
+
+  var isMe = false;
+
   if (playerNumber === this.myPlayerNumber) {
-    avatarName += '-active';
+    isMe = true;
+    
+    if (attacking) {
+      avatarName += '-stab';
+    } else {
+      avatarName += '-active';
+    }
   }
 
   this.removeDeadPlayer(playerNumber);
 
   // Check to see if player is already on the board
-  if ($(playerClass).length === 0) {
+  if (isMe || $(playerClass).length === 0) {
+    this.removePlayer(playerNumber);
     // Add the player
     $('.canvas').append("<img class='" + playerName + "' src='images/sprites/" + avatarName + ".png' style='position:absolute'>");
   }
 
   $(playerClass).css({
     left: 32*x,
-    top: 32*y
+    top: (32*y)
   });
 
   this.playerLocations[playerNumber] = {
@@ -126,8 +137,8 @@ Map.prototype.getPlayersAtPosition = function (x, y) {
 };
 
 Map.prototype.updateStats = function (stats) {
-  $('.stats').html("You have killed " + stats.kills + " people</br>");
-  $('.stats').append("You have been killed " + stats.deaths + " times</br>");
+  $('.stats').html('<img src="images/sprites/kill-stat.png" alt="kill-stat" width="26" height="21" /> You have killed ' + stats.kills + ' people</br>');
+  $('.stats').append('<img src="images/sprites/dead-stat.png" alt="kill-stat" width="26" height="21" /> You have been killed ' + stats.deaths + ' times</br>');
   
   this.playerStats[this.myPlayerNumber] = {
     kills: stats.kills,

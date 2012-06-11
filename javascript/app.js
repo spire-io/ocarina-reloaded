@@ -26,7 +26,7 @@ var subscriptionsUrlAndCaps = {
 
 function init() {
   // Authentication Form elements
-  var authenticationForm = $('#authenticationForm')
+  var authenticationForm = $('#login-container')
     , loginInput = authenticationForm.find('#login')
     , passwordInput = authenticationForm.find('#password')
     , loginButton = authenticationForm.find('#loginButton')
@@ -160,6 +160,26 @@ function init() {
     });
   }
 }
+
+// Toggle Login and Password on focus with graphic
+
+$(document).ready(function() {
+	$("#login").focus(function () {
+    $(".label-login").css("color","yellow");
+    $(".login-focus").toggle();
+  }).focusout(function () {
+    $(".label-login").css("color","white");
+    $(".login-focus").toggle();
+  });
+  
+	$("#password").focus(function () {
+    $(".label-password").css("color","yellow");
+    $(".password-focus").toggle();
+  }).focusout(function () {
+    $(".label-password").css("color","white");
+    $(".password-focus").toggle();
+  });  
+});
 
 $(document).ready(init);
 
