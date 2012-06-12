@@ -5,6 +5,7 @@ function Ocarina (member) {
   
   this.myName = member.data.login;
   this.myPlayerNumber = this.profile.myPlayerNumber;
+  this.profile.coins = this.profile.coins || 0;
   this.profile.deaths = this.profile.deaths || 0;
   this.profile.kills = this.profile.kills || 0;
 
@@ -63,6 +64,8 @@ Ocarina.prototype.moveMyPositionTo = function (x, y) {
     this.posX = x;
     this.posY = y;
     this.map.drawPlayer(this.myPlayerNumber, this.posX, this.posY);
+    this.profile.coins++;
+    this.updateProfile();
     this.send('move');
   }
 };
@@ -75,7 +78,8 @@ Ocarina.prototype.send = function (eventType) {
     x: this.posX,
     y: this.posY,
     kills: this.profile.kills,
-    deaths: this.profile.deaths
+    deaths: this.profile.deaths,
+    coins: this.profile.coins
   });
 };
 
@@ -104,12 +108,20 @@ Ocarina.prototype.attack = function () {
     if (playerNumber == this.myPlayerNumber) {
       continue;
     }
-    this.profile.kills++
+    this.profile.kills++;
+    this.stealCoins(playerNumber);
     this.map.drawDeadPlayer(playerNumber, this.posX, this.posY);
   }
   this.updateProfile();
   this.send('stats');
 };
+
+Ocarina.prototype.stealCoins = function(playerNumber){
+  var coins = this.map.playerStats[playerNumber].coins;
+  this.profile.coins += coins;
+  this.updateProfile();
+  this.send('stats');
+}
 
 // The messageListener runs for every message received.
 Ocarina.prototype.messageListener = function (message) {
@@ -121,8 +133,16 @@ Ocarina.prototype.messageListener = function (message) {
       playerName: messageData.playerName,
       playerNumber: messageData.playerNumber,
       kills: messageData.kills,
-      deaths: messageData.deaths
+      deaths: messageData.deaths,
+      coins: messageData.coins
     });
+  }
+  
+  if (messageType === 'move'){
+    if (messageData.playerNumber !== this.myPlayerNumber) {
+      this.map.drawPlayer(messageData.playerNumber, messageData.x, messageData.y);
+    }
+    this.send('stats');
   }
 
   // Ignore our own messages
@@ -134,13 +154,6 @@ Ocarina.prototype.messageListener = function (message) {
     this.send('move');
   }
 
-  if (messageType === 'move'){
-    if (messageData.playerNumber !== this.myPlayerNumber) {
-      this.map.drawPlayer(messageData.playerNumber, messageData.x, messageData.y);
-      this.send('stats');
-    }
-  }
-
   if (messageType === 'attack') {
     if (this.isDead) {
       return;
@@ -148,6 +161,7 @@ Ocarina.prototype.messageListener = function (message) {
 
     if ((messageData.x == this.posX) && (messageData.y == this.posY)){
       this.profile.deaths++;
+      this.profile.coins = 0;
       this.updateProfile();
       this.send('stats');
 
