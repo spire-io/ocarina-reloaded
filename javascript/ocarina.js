@@ -118,7 +118,7 @@ Ocarina.prototype.attack = function () {
 
 Ocarina.prototype.stealCoins = function(playerNumber){
   var coins = this.map.playerStats[playerNumber].coins;
-  this.profile.coins += coins;
+  this.profile.coins += parseInt(coins/4);
   this.updateProfile();
   this.send('stats');
 }
