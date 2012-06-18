@@ -2,9 +2,7 @@ $(document).ready(function(){
   var Spire = require('./spire.io.js')
   spire = new Spire();
 
-  // Login with our created account
-  // Use your email and password that you registered with here
-  spire.login("vsuria+test01@borderstylo.com", "password", function (err) {
+  spire.start("YOUR-ACCOUNT-SECRET", function (err) {
     if (!err) {
       // You now have a spire session.
       // Start creating channels and subscripions.
